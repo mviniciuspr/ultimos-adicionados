@@ -1,533 +1,333 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Últimos veículos adicionados</title>
 
-    <title>Últimos Veículos Adicionados</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-    <style>
+    body {
+      margin: 0;
+      padding: 32px 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f5f7;
+      color: #222;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f6f8;
-            color: #20242a;
-        }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
 
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+    .subtitulo {
+      margin: 0 0 28px;
+      color: #666;
+      font-size: 15px;
+    }
 
-        .header {
-            margin-bottom: 24px;
-        }
+    .painel {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
 
-        .header h1 {
-            margin: 0 0 6px;
-            font-size: 28px;
-        }
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.6px;
+      color: #555;
+    }
 
-        .header p {
-            margin: 0;
-            color: #747a82;
-        }
+    input[type="date"] {
+      width: 100%;
+      max-width: 320px;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+    }
 
-        .panel {
-            background: #ffffff;
-            border: 1px solid #e3e6ea;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+    .contador {
+      margin: 24px 0 16px;
+      font-size: 14px;
+      color: #555;
+    }
 
-        .toolbar {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 20px;
-            padding: 20px;
-            border-bottom: 1px solid #e8eaed;
-        }
+    .tabela-container {
+      overflow-x: auto;
+    }
 
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
 
-        label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #555b63;
-        }
+    th {
+      padding: 14px 12px;
+      background: #f8f9fb;
+      color: #555;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border-bottom: 1px solid #e5e7eb;
+    }
 
-        input[type="date"] {
-            height: 40px;
-            min-width: 190px;
-            padding: 0 12px;
+    td {
+      padding: 16px 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
 
-            border: 1px solid #d8dce1;
-            border-radius: 7px;
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
 
-            font-size: 14px;
+    .placa {
+      font-weight: bold;
+      white-space: nowrap;
+    }
 
-            background: #ffffff;
-            color: #20242a;
-        }
+    .valor {
+      font-weight: bold;
+      white-space: nowrap;
+    }
 
-        input[type="date"]:focus {
-            outline: none;
-            border-color: #888f98;
-        }
+    .mensagem {
+      padding: 32px 12px;
+      text-align: center;
+      color: #777;
+      font-size: 14px;
+    }
 
-        .count {
-            color: #666d75;
-            font-size: 14px;
-            padding-bottom: 10px;
-        }
+    @media (max-width: 600px) {
+      body {
+        padding: 24px 12px;
+      }
 
-        .table-wrap {
-            overflow-x: auto;
-        }
+      .painel {
+        padding: 16px;
+      }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+      h1 {
+        font-size: 23px;
+      }
 
-        th,
-        td {
-            padding: 15px 20px;
-            text-align: left;
-            border-bottom: 1px solid #eef0f2;
-        }
-
-        th {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-
-            color: #777e86;
-            background: #fafbfc;
-        }
-
-        td {
-            font-size: 14px;
-        }
-
-        td.placa {
-            font-weight: 700;
-            letter-spacing: .04em;
-        }
-
-        td.valor {
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        tr:last-child td {
-            border-bottom: 0;
-        }
-
-        .empty {
-            padding: 45px 20px;
-            text-align: center;
-            color: #7b8188;
-            display: none;
-        }
-
-        @media (max-width: 650px) {
-
-            .container {
-                margin: 24px auto;
-            }
-
-            .toolbar {
-                align-items: stretch;
-                flex-direction: column;
-            }
-
-            .count {
-                padding-bottom: 0;
-            }
-
-            input[type="date"] {
-                width: 100%;
-            }
-
-            th,
-            td {
-                padding: 13px 14px;
-            }
-
-        }
-
-    </style>
-
+      th, td {
+        padding: 13px 10px;
+      }
+    }
+  </style>
 </head>
 
-
 <body>
+  <main class="container">
+    <h1>Últimos veículos adicionados</h1>
+    <p class="subtitulo">
+      Controle dos veículos adicionados ao site.
+    </p>
 
+    <section class="painel">
+      <label for="data">SELECIONE A DATA DE ENTRADA</label>
+      <input type="date" id="data">
 
-<div class="container">
+      <p class="contador" id="contador">
+        Selecione uma data para consultar os veículos.
+      </p>
 
+      <div class="tabela-container">
+        <table id="tabela" hidden>
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Modelo</th>
+              <th>Valor</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody id="lista"></tbody>
+        </table>
 
-    <div class="header">
-
-        <h1>
-            Últimos veículos adicionados
-        </h1>
-
-        <p>
-            Controle dos veículos adicionados ao site.
-        </p>
-
-    </div>
-
-
-    <div class="panel">
-
-
-        <!-- FILTRO -->
-
-        <div class="toolbar">
-
-            <div class="field">
-
-                <label for="data">
-                    DATA DE ENTRADA
-                </label>
-
-                <input
-                    type="date"
-                    id="data"
-                >
-
-            </div>
-
-
-            <div
-                class="count"
-                id="count"
-            ></div>
-
+        <div class="mensagem" id="mensagem">
+          Escolha uma data acima para visualizar as placas.
         </div>
+      </div>
+    </section>
+  </main>
 
-
-        <!-- TABELA -->
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Placa
-                        </th>
-
-                        <th>
-                            Modelo
-                        </th>
-
-                        <th>
-                            Valor
-                        </th>
-
-                        <th>
-                            Data
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="lista"></tbody>
-
-            </table>
-
-
-            <div
-                class="empty"
-                id="empty"
-            >
-                Nenhum veículo adicionado nesta data.
-            </div>
-
-        </div>
-
-
-    </div>
-
-
-</div>
-
-
-
-<script>
-
-
-/*
-    LISTA DE VEÍCULOS
-
-    Para adicionar um novo carro,
-    copie um dos blocos abaixo.
-*/
-
-const veiculos = [
-
-    {
+  <script>
+    const veiculos = [
+      // Veículos adicionados em 07/10/2026
+      {
         placa: "JCV9B00",
         modelo: "Strada Volcano 1.3 Flex 8V CD",
         valor: 111990,
         data: "2026-10-07"
-    },
-
-
-    {
+      },
+      {
         placa: "IWD7J98",
         modelo: "HB20S 1.6 Comfort Plus 16V Flex 4P Manual",
         valor: 59990,
         data: "2026-10-07"
-    },
-
-
-    {
+      },
+      {
         placa: "TQQ5C00",
         modelo: "Toro 1.3 Turbo 270 Flex Volcano AT6",
         valor: 135990,
         data: "2026-10-07"
-    },
-
-
-    {
+      },
+      {
         placa: "JDC4A64",
         modelo: "Toro 2.0 16V Turbo Diesel Ranch 4WD AT9",
         valor: 159990,
         data: "2026-10-07"
-    },
-
-
-    {
+      },
+      {
         placa: "TQO6B65",
         modelo: "Fastback 1.0 Turbo 200 Hybrid Audace CVT",
         valor: 114990,
         data: "2026-10-07"
-    }
-   
-            
-
-];
-
-
-
-/*
-    ELEMENTOS DA PÁGINA
-*/
-
-const dataInput =
-    document.getElementById("data");
-
-
-const lista =
-    document.getElementById("lista");
-
-
-const count =
-    document.getElementById("count");
-
-
-const empty =
-    document.getElementById("empty");
-
-
-
-/*
-    DATA INICIAL
-
-    Aqui deixamos a página
-    abrindo já no dia 07/10/2026.
-*/
-
-dataInput.value = "2026-10-07";
-
-
-
-/*
-    FORMATA VALOR
-
-    Exemplo:
-    111990 → R$ 111.990,00
-*/
-
-function moeda(valor) {
-
-    return valor.toLocaleString(
-        "pt-BR",
-        {
-            style: "currency",
-            currency: "BRL"
-        }
-    );
-
-}
-
-
-
-/*
-    FORMATA DATA
-
-    Exemplo:
-    2026-10-07 → 07/10/2026
-*/
-
-function dataBR(data) {
-
-    const partes =
-        data.split("-");
-
-    const ano = partes[0];
-    const mes = partes[1];
-    const dia = partes[2];
-
-    return `${dia}/${mes}/${ano}`;
-
-}
-
-
-
-/*
-    RENDERIZA A TABELA
-*/
-
-function renderizar() {
-
-
-    /*
-        Pega somente os veículos
-        da data selecionada.
-    */
-
-    const selecionados =
-        veiculos.filter(
-            veiculo =>
-                veiculo.data === dataInput.value
-        );
-
-
-
-    /*
-        Limpa a tabela
-    */
-
-    lista.innerHTML = "";
-
-
-
-    /*
-        Adiciona os veículos
-    */
-
-    selecionados.forEach(veiculo => {
-
-
-        const tr =
-            document.createElement("tr");
-
-
-        tr.innerHTML = `
-
-            <td class="placa">
-                ${veiculo.placa}
-            </td>
-
-            <td>
-                ${veiculo.modelo}
-            </td>
-
-            <td class="valor">
-                ${moeda(veiculo.valor)}
-            </td>
-
-            <td>
-                ${dataBR(veiculo.data)}
-            </td>
-
-        `;
-
-
-        lista.appendChild(tr);
-
-    });
-
-
-
-    /*
-        Mostra quantidade
-    */
-
-    count.textContent =
-        `${selecionados.length} veículo${
-            selecionados.length !== 1
-                ? "s"
-                : ""
-        } adicionado${
-            selecionados.length !== 1
-                ? "s"
-                : ""
-        }`;
-
-
-
-    /*
-        Caso não tenha veículos
-    */
-
-    if (selecionados.length === 0) {
-
-        empty.style.display = "block";
-
-    } else {
-
-        empty.style.display = "none";
-
+      },
+
+      // Veículos adicionados em 08/10/2026
+      {
+        placa: "JCG1A78",
+        modelo: "Cronos 1.3 Drive CVT",
+        valor: 79990,
+        data: "2026-10-08"
+      },
+      {
+        placa: "JAH7I90",
+        modelo: "Argo 1.3 Trekking",
+        valor: 69990,
+        data: "2026-10-08"
+      },
+      {
+        placa: "JBU8I42",
+        modelo: "Strada 1.3 Volcano CD Aut.",
+        valor: 105990,
+        data: "2026-10-08"
+      },
+      {
+        placa: "IZH8A43",
+        modelo: "Renegade 1.8 16V Sport",
+        valor: 72990,
+        data: "2026-10-08"
+      },
+      {
+        placa: "JDE4A34",
+        modelo: "Onix 1.0 Turbo Premier II AT",
+        valor: 94990,
+        data: "2026-10-08"
+      },
+      {
+        placa: "TQU5E22",
+        modelo: "Fiorino 1.3 Endurance Manual",
+        valor: 98990,
+        data: "2026-10-08"
+      }
+    ];
+
+    const campoData = document.getElementById("data");
+    const contador = document.getElementById("contador");
+    const tabela = document.getElementById("tabela");
+    const lista = document.getElementById("lista");
+    const mensagem = document.getElementById("mensagem");
+
+    const formatarValor = valor =>
+      valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        maximumFractionDigits: 0
+      });
+
+    const formatarData = data => {
+      const [ano, mes, dia] = data.split("-");
+      return `${dia}/${mes}/${ano}`;
+    };
+
+    function atualizarTabela() {
+      const dataSelecionada = campoData.value;
+
+      // Não exibe nenhuma placa enquanto uma data
+      // não tiver sido selecionada.
+      if (!dataSelecionada) {
+        tabela.hidden = true;
+        lista.innerHTML = "";
+        contador.textContent =
+          "Selecione uma data para consultar os veículos.";
+        mensagem.hidden = false;
+        mensagem.textContent =
+          "Escolha uma data acima para visualizar as placas.";
+        return;
+      }
+
+      const encontrados = veiculos.filter(
+        veiculo => veiculo.data === dataSelecionada
+      );
+
+      lista.innerHTML = "";
+      tabela.hidden = encontrados.length === 0;
+      mensagem.hidden = encontrados.length > 0;
+
+      if (encontrados.length === 0) {
+        contador.textContent = "Nenhum veículo encontrado.";
+        mensagem.textContent =
+          "Não há veículos cadastrados para " +
+          formatarData(dataSelecionada) + ".";
+        return;
+      }
+
+      contador.textContent =
+        `${encontrados.length} veículo${encontrados.length === 1 ? "" : "s"} adicionado${encontrados.length === 1 ? "" : "s"} em ${formatarData(dataSelecionada)}`;
+
+      encontrados.forEach(veiculo => {
+        const linha = document.createElement("tr");
+
+        [
+          veiculo.placa,
+          veiculo.modelo,
+          formatarValor(veiculo.valor),
+          formatarData(veiculo.data)
+        ].forEach((texto, indice) => {
+          const celula = document.createElement("td");
+          celula.textContent = texto;
+
+          if (indice === 0) {
+            celula.className = "placa";
+          }
+
+          if (indice === 2) {
+            celula.className = "valor";
+          }
+
+          linha.appendChild(celula);
+        });
+
+        lista.appendChild(linha);
+      });
     }
 
-}
+    campoData.addEventListener("change", atualizarTabela);
 
-
-
-/*
-    QUANDO O USUÁRIO
-    ALTERAR A DATA
-*/
-
-dataInput.addEventListener(
-    "change",
-    renderizar
-);
-
-
-
-/*
-    CARREGA A TABELA
-*/
-
-renderizar();
-
-
-</script>
-
-
+    // A página inicia sem uma data selecionada.
+    atualizarTabela();
+  </script>
 </body>
 </html>
