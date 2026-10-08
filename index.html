@@ -42,13 +42,23 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
     }
 
+    .campo {
+      margin-bottom: 18px;
+    }
+
     label {
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-size: 12px;
       font-weight: bold;
       letter-spacing: 0.6px;
       color: #555;
+    }
+
+    .ajuda {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: #777;
     }
 
     input[type="date"] {
@@ -62,24 +72,15 @@
       color: #222;
     }
 
-    .busca {
-      margin-top: 14px;
-    }
-
     #busca {
       width: 100%;
-      max-width: 420px;
+      max-width: 500px;
       padding: 12px;
       font-size: 15px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
       background: white;
       color: #222;
-    }
-
-    #busca:disabled {
-      background: #f1f2f4;
-      cursor: not-allowed;
     }
 
     .contador {
@@ -128,6 +129,10 @@
       white-space: nowrap;
     }
 
+    .data {
+      white-space: nowrap;
+    }
+
     .mensagem {
       padding: 32px 12px;
       text-align: center;
@@ -157,6 +162,7 @@
 </head>
 
 <body>
+
   <main class="container">
 
     <h1>Últimos veículos adicionados</h1>
@@ -167,22 +173,44 @@
 
     <section class="painel">
 
-      <label for="data">SELECIONE A DATA DE ENTRADA</label>
+      <div class="campo">
 
-      <input type="date" id="data">
+        <label for="data">
+          SELECIONE A DATA DE ENTRADA
+        </label>
 
-      <div class="busca">
+        <p class="ajuda">
+          Escolha uma data no calendário para visualizar os veículos daquele dia.
+        </p>
+
+        <input type="date" id="data">
+
+      </div>
+
+
+      <div class="campo">
+
+        <label for="busca">
+          BUSCAR VEÍCULO
+        </label>
+
+        <p class="ajuda">
+          Digite a placa ou o modelo. A busca considera todas as datas.
+        </p>
+
         <input
           type="text"
           id="busca"
-          placeholder="Buscar por placa ou modelo..."
-          disabled
+          placeholder="Ex.: TQU5E22 ou Fiorino"
         >
+
       </div>
 
+
       <p class="contador" id="contador">
-        Selecione uma data para consultar os veículos.
+        Selecione uma data ou faça uma busca.
       </p>
+
 
       <div class="tabela-container">
 
@@ -193,7 +221,7 @@
               <th>Placa</th>
               <th>Modelo</th>
               <th>Valor</th>
-              <th>Data</th>
+              <th>Data de entrada</th>
             </tr>
           </thead>
 
@@ -201,8 +229,9 @@
 
         </table>
 
+
         <div class="mensagem" id="mensagem">
-          Escolha uma data acima para visualizar as placas.
+          Selecione uma data acima ou pesquise por placa/modelo.
         </div>
 
       </div>
@@ -211,11 +240,14 @@
 
   </main>
 
+
   <script>
 
     const veiculos = [
 
+      // =========================
       // 07/10/2026
+      // =========================
 
       {
         placa: "JCV9B00",
@@ -253,7 +285,9 @@
       },
 
 
+      // =========================
       // 08/10/2026
+      // =========================
 
       {
         placa: "JCG1A78",
@@ -331,97 +365,100 @@
     function atualizarTabela() {
 
       const dataSelecionada = campoData.value;
+      const termo = campoBusca.value.trim().toLowerCase();
 
 
-      // Nenhuma data selecionada
+      /*
+        
+        procura em TODAS as datas.
+      */
 
-      if (!dataSelecionada) {
+      if (termo) {
 
-        tabela.hidden = true;
+        const encontrados = veiculos.filter(veiculo => {
 
-        lista.innerHTML = "";
+          return (
+            veiculo.placa.toLowerCase().includes(termo) ||
+            veiculo.modelo.toLowerCase().includes(termo)
+          );
 
-        campoBusca.disabled = true;
+        });
 
-        campoBusca.value = "";
 
-        contador.textContent =
-          "Selecione uma data para consultar os veículos.";
-
-        mensagem.hidden = false;
-
-        mensagem.textContent =
-          "Escolha uma data acima para visualizar as placas.";
+        mostrarResultados(
+          encontrados,
+          `Resultado da busca: ${encontrados.length} veículo${encontrados.length === 1 ? "" : "s"} encontrado${encontrados.length === 1 ? "" : "s"}`
+        );
 
         return;
 
       }
 
 
-      // Data selecionada
+      /*
+        SEM BUSCA:
+        mostra somente a data selecionada.
+      */
 
-      campoBusca.disabled = false;
+      if (dataSelecionada) {
+
+        const encontrados = veiculos.filter(
+          veiculo => veiculo.data === dataSelecionada
+        );
 
 
-      const termo = campoBusca.value
-        .trim()
-        .toLowerCase();
+        mostrarResultados(
+          encontrados,
+          `${encontrados.length} veículo${encontrados.length === 1 ? "" : "s"} adicionado${encontrados.length === 1 ? "" : "s"} em ${formatarData(dataSelecionada)}`
+        );
+
+        return;
+
+      }
 
 
-      const encontrados = veiculos.filter(veiculo =>
+      /*
+        NADA SELECIONADO.
+      */
 
-        veiculo.data === dataSelecionada &&
+      tabela.hidden = true;
+      lista.innerHTML = "";
 
-        (
-          veiculo.placa
-            .toLowerCase()
-            .includes(termo)
+      contador.textContent =
+        "Selecione uma data ou faça uma busca.";
 
-          ||
+      mensagem.hidden = false;
 
-          veiculo.modelo
-            .toLowerCase()
-            .includes(termo)
-        )
+      mensagem.textContent =
+        "Escolha uma data no calendário ou pesquise por placa/modelo.";
 
-      );
+    }
 
+
+    function mostrarResultados(encontrados, textoContador) {
 
       lista.innerHTML = "";
 
-      tabela.hidden = encontrados.length === 0;
-
-      mensagem.hidden = encontrados.length > 0;
+      contador.textContent = textoContador;
 
 
       if (encontrados.length === 0) {
 
-        contador.textContent =
-          "Nenhum veículo encontrado.";
+        tabela.hidden = true;
+
+        mensagem.hidden = false;
 
         mensagem.textContent =
-          termo
-            ? "Nenhum veículo corresponde à busca."
-            : "Não há veículos cadastrados para " +
-              formatarData(dataSelecionada) +
-              ".";
+          "Nenhum veículo encontrado.";
 
         return;
 
       }
 
 
-      contador.textContent =
+      tabela.hidden = false;
 
-        `${encontrados.length} veículo` +
-
-        `${encontrados.length === 1 ? "" : "s"}` +
-
-        ` adicionado` +
-
-        `${encontrados.length === 1 ? "" : "s"}` +
-
-        ` em ${formatarData(dataSelecionada)}`;
+      mensagem.hidden = true;
 
 
       encontrados.forEach(veiculo => {
@@ -459,6 +496,11 @@
           }
 
 
+          if (indice === 3) {
+            celula.className = "data";
+          }
+
+
           linha.appendChild(celula);
 
         });
@@ -483,7 +525,7 @@
     );
 
 
-    // Começa sem mostrar veículos
+    // Começa sem mostrar veículos.
 
     atualizarTabela();
 
