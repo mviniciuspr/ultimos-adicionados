@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -61,6 +60,26 @@
       border-radius: 8px;
       background: white;
       color: #222;
+    }
+
+    .busca {
+      margin-top: 14px;
+    }
+
+    #busca {
+      width: 100%;
+      max-width: 420px;
+      padding: 12px;
+      font-size: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: white;
+      color: #222;
+    }
+
+    #busca:disabled {
+      background: #f1f2f4;
+      cursor: not-allowed;
     }
 
     .contador {
@@ -129,7 +148,8 @@
         font-size: 23px;
       }
 
-      th, td {
+      th,
+      td {
         padding: 13px 10px;
       }
     }
@@ -138,21 +158,36 @@
 
 <body>
   <main class="container">
+
     <h1>Últimos veículos adicionados</h1>
+
     <p class="subtitulo">
       Controle dos veículos adicionados ao site.
     </p>
 
     <section class="painel">
+
       <label for="data">SELECIONE A DATA DE ENTRADA</label>
+
       <input type="date" id="data">
+
+      <div class="busca">
+        <input
+          type="text"
+          id="busca"
+          placeholder="Buscar por placa ou modelo..."
+          disabled
+        >
+      </div>
 
       <p class="contador" id="contador">
         Selecione uma data para consultar os veículos.
       </p>
 
       <div class="tabela-container">
+
         <table id="tabela" hidden>
+
           <thead>
             <tr>
               <th>Placa</th>
@@ -161,43 +196,55 @@
               <th>Data</th>
             </tr>
           </thead>
+
           <tbody id="lista"></tbody>
+
         </table>
 
         <div class="mensagem" id="mensagem">
           Escolha uma data acima para visualizar as placas.
         </div>
+
       </div>
+
     </section>
+
   </main>
 
   <script>
+
     const veiculos = [
-      // Veículos adicionados em 07/10/2026
+
+      // 07/10/2026
+
       {
         placa: "JCV9B00",
         modelo: "Strada Volcano 1.3 Flex 8V CD",
         valor: 111990,
         data: "2026-10-07"
       },
+
       {
         placa: "IWD7J98",
         modelo: "HB20S 1.6 Comfort Plus 16V Flex 4P Manual",
         valor: 59990,
         data: "2026-10-07"
       },
+
       {
         placa: "TQQ5C00",
         modelo: "Toro 1.3 Turbo 270 Flex Volcano AT6",
         valor: 135990,
         data: "2026-10-07"
       },
+
       {
         placa: "JDC4A64",
         modelo: "Toro 2.0 16V Turbo Diesel Ranch 4WD AT9",
         valor: 159990,
         data: "2026-10-07"
       },
+
       {
         placa: "TQO6B65",
         modelo: "Fastback 1.0 Turbo 200 Hybrid Audace CVT",
@@ -205,129 +252,242 @@
         data: "2026-10-07"
       },
 
-      // Veículos adicionados em 08/10/2026
+
+      // 08/10/2026
+
       {
         placa: "JCG1A78",
         modelo: "Cronos 1.3 Drive CVT",
         valor: 79990,
         data: "2026-10-08"
       },
+
       {
         placa: "JAH7I90",
         modelo: "Argo 1.3 Trekking",
         valor: 69990,
         data: "2026-10-08"
       },
+
       {
         placa: "JBU8I42",
         modelo: "Strada 1.3 Volcano CD Aut.",
         valor: 105990,
         data: "2026-10-08"
       },
+
       {
         placa: "IZH8A43",
         modelo: "Renegade 1.8 16V Sport",
         valor: 72990,
         data: "2026-10-08"
       },
+
       {
         placa: "JDE4A34",
         modelo: "Onix 1.0 Turbo Premier II AT",
         valor: 94990,
         data: "2026-10-08"
       },
+
       {
         placa: "TQU5E22",
         modelo: "Fiorino 1.3 Endurance Manual",
         valor: 98990,
         data: "2026-10-08"
       }
+
     ];
 
+
     const campoData = document.getElementById("data");
+    const campoBusca = document.getElementById("busca");
     const contador = document.getElementById("contador");
     const tabela = document.getElementById("tabela");
     const lista = document.getElementById("lista");
     const mensagem = document.getElementById("mensagem");
 
-    const formatarValor = valor =>
-      valor.toLocaleString("pt-BR", {
+
+    function formatarValor(valor) {
+
+      return valor.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
         maximumFractionDigits: 0
       });
 
-    const formatarData = data => {
+    }
+
+
+    function formatarData(data) {
+
       const [ano, mes, dia] = data.split("-");
+
       return `${dia}/${mes}/${ano}`;
-    };
+
+    }
+
 
     function atualizarTabela() {
+
       const dataSelecionada = campoData.value;
 
-      // Não exibe nenhuma placa enquanto uma data
-      // não tiver sido selecionada.
+
+      // Nenhuma data selecionada
+
       if (!dataSelecionada) {
+
         tabela.hidden = true;
+
         lista.innerHTML = "";
+
+        campoBusca.disabled = true;
+
+        campoBusca.value = "";
+
         contador.textContent =
           "Selecione uma data para consultar os veículos.";
+
         mensagem.hidden = false;
+
         mensagem.textContent =
           "Escolha uma data acima para visualizar as placas.";
+
         return;
+
       }
 
-      const encontrados = veiculos.filter(
-        veiculo => veiculo.data === dataSelecionada
+
+      // Data selecionada
+
+      campoBusca.disabled = false;
+
+
+      const termo = campoBusca.value
+        .trim()
+        .toLowerCase();
+
+
+      const encontrados = veiculos.filter(veiculo =>
+
+        veiculo.data === dataSelecionada &&
+
+        (
+          veiculo.placa
+            .toLowerCase()
+            .includes(termo)
+
+          ||
+
+          veiculo.modelo
+            .toLowerCase()
+            .includes(termo)
+        )
+
       );
 
+
       lista.innerHTML = "";
+
       tabela.hidden = encontrados.length === 0;
+
       mensagem.hidden = encontrados.length > 0;
 
+
       if (encontrados.length === 0) {
-        contador.textContent = "Nenhum veículo encontrado.";
+
+        contador.textContent =
+          "Nenhum veículo encontrado.";
+
         mensagem.textContent =
-          "Não há veículos cadastrados para " +
-          formatarData(dataSelecionada) + ".";
+          termo
+            ? "Nenhum veículo corresponde à busca."
+            : "Não há veículos cadastrados para " +
+              formatarData(dataSelecionada) +
+              ".";
+
         return;
+
       }
 
+
       contador.textContent =
-        `${encontrados.length} veículo${encontrados.length === 1 ? "" : "s"} adicionado${encontrados.length === 1 ? "" : "s"} em ${formatarData(dataSelecionada)}`;
+
+        `${encontrados.length} veículo` +
+
+        `${encontrados.length === 1 ? "" : "s"}` +
+
+        ` adicionado` +
+
+        `${encontrados.length === 1 ? "" : "s"}` +
+
+        ` em ${formatarData(dataSelecionada)}`;
+
 
       encontrados.forEach(veiculo => {
+
         const linha = document.createElement("tr");
 
-        [
+
+        const dados = [
+
           veiculo.placa,
+
           veiculo.modelo,
+
           formatarValor(veiculo.valor),
+
           formatarData(veiculo.data)
-        ].forEach((texto, indice) => {
+
+        ];
+
+
+        dados.forEach((texto, indice) => {
+
           const celula = document.createElement("td");
+
           celula.textContent = texto;
+
 
           if (indice === 0) {
             celula.className = "placa";
           }
 
+
           if (indice === 2) {
             celula.className = "valor";
           }
 
+
           linha.appendChild(celula);
+
         });
 
+
         lista.appendChild(linha);
+
       });
+
     }
 
-    campoData.addEventListener("change", atualizarTabela);
 
-    // A página inicia sem uma data selecionada.
+    campoData.addEventListener(
+      "change",
+      atualizarTabela
+    );
+
+
+    campoBusca.addEventListener(
+      "input",
+      atualizarTabela
+    );
+
+
+    // Começa sem mostrar veículos
+
     atualizarTabela();
+
   </script>
+
 </body>
 </html>
