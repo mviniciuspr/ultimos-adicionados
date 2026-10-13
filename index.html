@@ -124,13 +124,13 @@
       white-space: nowrap;
     }
 
-    .valor {
-      font-weight: bold;
+    .valor,
+    .data {
       white-space: nowrap;
     }
 
-    .data {
-      white-space: nowrap;
+    .valor {
+      font-weight: bold;
     }
 
     .mensagem {
@@ -174,9 +174,8 @@
     <section class="painel">
 
       <div class="campo">
-
         <label for="data">
-          SELECIONE A DATA DE ENTRADA
+          SELECIONE A DATA DE ENTRADA (DD/MM/AAAA)
         </label>
 
         <p class="ajuda">
@@ -184,12 +183,9 @@
         </p>
 
         <input type="date" id="data">
-
       </div>
 
-
       <div class="campo">
-
         <label for="busca">
           BUSCAR VEÍCULO
         </label>
@@ -201,21 +197,17 @@
         <input
           type="text"
           id="busca"
-          placeholder="Ex.: TQU5E22 ou Fiorino"
+          placeholder="Ex.: JAP6I02 ou Strada"
         >
-
       </div>
-
 
       <p class="contador" id="contador">
         Selecione uma data ou faça uma busca.
       </p>
 
-
       <div class="tabela-container">
 
         <table id="tabela" hidden>
-
           <thead>
             <tr>
               <th>Placa</th>
@@ -226,9 +218,7 @@
           </thead>
 
           <tbody id="lista"></tbody>
-
         </table>
-
 
         <div class="mensagem" id="mensagem">
           Selecione uma data acima ou pesquise por placa/modelo.
@@ -239,7 +229,6 @@
     </section>
 
   </main>
-
 
   <script>
 
@@ -329,6 +318,81 @@
         modelo: "Fiorino 1.3 Endurance Manual",
         valor: 98990,
         data: "2026-10-08"
+      },
+
+
+      // =========================
+      // 13/10/2026
+      // =========================
+
+      {
+        placa: "JAP6I02",
+        modelo: "Onix 1.0 Joy Black Edition 8V Flex Mec",
+        valor: 58990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "JCV4A25",
+        modelo: "Mobi 1.0 Evo Flex Trekking Manual",
+        valor: 67990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "JCX7G96",
+        modelo: "Strada 1.3 Firefly Flex Freedom CS Manual",
+        valor: 84990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "RTL2J43",
+        modelo: "Strada Freedom 1.3 Flex 8V CS Plus",
+        valor: 75990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "JCQ3D01",
+        modelo: "Toro 1.3 Turbo 270 Flex Volcano AT6",
+        valor: 134990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "JDL8H19",
+        modelo: "Toro 1.3 Turbo 270 Flex Freedom AT6",
+        valor: 128990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "TQT2F19",
+        modelo: "Tracker 1.0 Turbo Flex Automático",
+        valor: 102990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "IYR-9415",
+        modelo: "Cronos Drive 1.3 8V Flex",
+        valor: 52990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "TQP7B91",
+        modelo: "Kwid Iconic 1.0 Flex 12V 5P Mec",
+        valor: 66990,
+        data: "2026-10-13"
+      },
+
+      {
+        placa: "JAA3G78",
+        modelo: "Sandero 1.0 12V SCE Flex Zen Manual",
+        valor: 47990,
+        data: "2026-10-13"
       }
 
     ];
@@ -343,22 +407,17 @@
 
 
     function formatarValor(valor) {
-
       return valor.toLocaleString("pt-BR", {
         style: "currency",
         currency: "BRL",
         maximumFractionDigits: 0
       });
-
     }
 
 
     function formatarData(data) {
-
       const [ano, mes, dia] = data.split("-");
-
       return `${dia}/${mes}/${ano}`;
-
     }
 
 
@@ -368,10 +427,7 @@
       const termo = campoBusca.value.trim().toLowerCase();
 
 
-      /*
-        
-        procura em TODAS as datas.
-      */
+      // Busca preenchida: pesquisa em todas as datas.
 
       if (termo) {
 
@@ -384,21 +440,16 @@
 
         });
 
-
         mostrarResultados(
           encontrados,
-          `Resultado da busca: ${encontrados.length} veículo${encontrados.length === 1 ? "" : "s"} encontrado${encontrados.length === 1 ? "" : "s"}`
+          `Resultado da busca: ${encontrados.length} veículo(s) encontrado(s) em todas as datas.`
         );
 
         return;
-
       }
 
 
-      /*
-        SEM BUSCA:
-        mostra somente a data selecionada.
-      */
+      // Sem busca: mostra somente a data selecionada.
 
       if (dataSelecionada) {
 
@@ -406,20 +457,16 @@
           veiculo => veiculo.data === dataSelecionada
         );
 
-
         mostrarResultados(
           encontrados,
-          `${encontrados.length} veículo${encontrados.length === 1 ? "" : "s"} adicionado${encontrados.length === 1 ? "" : "s"} em ${formatarData(dataSelecionada)}`
+          `${encontrados.length} veículo(s) adicionado(s) em ${formatarData(dataSelecionada)}.`
         );
 
         return;
-
       }
 
 
-      /*
-        NADA SELECIONADO.
-      */
+      // Nenhuma data ou busca selecionada.
 
       tabela.hidden = true;
       lista.innerHTML = "";
@@ -428,83 +475,59 @@
         "Selecione uma data ou faça uma busca.";
 
       mensagem.hidden = false;
-
       mensagem.textContent =
         "Escolha uma data no calendário ou pesquise por placa/modelo.";
-
     }
 
 
     function mostrarResultados(encontrados, textoContador) {
 
       lista.innerHTML = "";
-
       contador.textContent = textoContador;
-
 
       if (encontrados.length === 0) {
 
         tabela.hidden = true;
-
         mensagem.hidden = false;
-
-        mensagem.textContent =
-          "Nenhum veículo encontrado.";
+        mensagem.textContent = "Nenhum veículo encontrado.";
 
         return;
-
       }
 
-
       tabela.hidden = false;
-
       mensagem.hidden = true;
-
 
       encontrados.forEach(veiculo => {
 
         const linha = document.createElement("tr");
 
-
         const dados = [
-
           veiculo.placa,
-
           veiculo.modelo,
-
           formatarValor(veiculo.valor),
-
           formatarData(veiculo.data)
-
         ];
-
 
         dados.forEach((texto, indice) => {
 
           const celula = document.createElement("td");
-
           celula.textContent = texto;
-
 
           if (indice === 0) {
             celula.className = "placa";
           }
 
-
           if (indice === 2) {
             celula.className = "valor";
           }
-
 
           if (indice === 3) {
             celula.className = "data";
           }
 
-
           linha.appendChild(celula);
 
         });
-
 
         lista.appendChild(linha);
 
@@ -513,19 +536,8 @@
     }
 
 
-    campoData.addEventListener(
-      "change",
-      atualizarTabela
-    );
-
-
-    campoBusca.addEventListener(
-      "input",
-      atualizarTabela
-    );
-
-
-    // Começa sem mostrar veículos.
+    campoData.addEventListener("change", atualizarTabela);
+    campoBusca.addEventListener("input", atualizarTabela);
 
     atualizarTabela();
 
